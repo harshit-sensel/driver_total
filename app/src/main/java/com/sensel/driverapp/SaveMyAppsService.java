@@ -411,34 +411,9 @@ public class SaveMyAppsService extends android.app.Service
                 if (locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER) && Gridmenu.points!=null && Gridmenu.points.length == 8 && !Gridmenu.points[7].contains("NA")) {
                     if(isNetworkAvailable() && vehicle_speed[3].contains("1")) {
                         if (Float.valueOf(vehicle_speed[1]) > 10) {
-                            if (powerManager.isScreenOn()) {
-                                if (LockScreenActivity.speed > 10) {
-                                    Intent i = new Intent(context, LockScreenActivity.class);
-                                    i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                                    LockScreenActivity.flag = false;
-                                    if (!blocked) {
-                                        ActivityLog("Mobile Locked");
-                                        blocked = true;
-                                    }
-                                    context.startActivity(i);
-                                } else {
-                                    LockScreenActivity.flag = true;
-                                    blocked = false;
-                                }
-                            } else {
-                                mWakeLock = powerManager.newWakeLock(PowerManager.SCREEN_BRIGHT_WAKE_LOCK | PowerManager.ACQUIRE_CAUSES_WAKEUP, "tag");
-                                mWakeLock.acquire(100000000);
-                            }
-                        } else {
-                            LockScreenActivity.flag = true;
-                            blocked = false;
-                        }
-                    }
-                    else{
-                        if(powerManager.isScreenOn()) {
                             if (LockScreenActivity.speed > 10) {
                                 Intent i = new Intent(context, LockScreenActivity.class);
-                                i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                                i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
                                 LockScreenActivity.flag = false;
                                 if (!blocked) {
                                     ActivityLog("Mobile Locked");
@@ -449,9 +424,24 @@ public class SaveMyAppsService extends android.app.Service
                                 LockScreenActivity.flag = true;
                                 blocked = false;
                             }
-                        }else {
-                            mWakeLock = powerManager.newWakeLock(PowerManager.SCREEN_BRIGHT_WAKE_LOCK | PowerManager.ACQUIRE_CAUSES_WAKEUP, "tag");
-                            mWakeLock.acquire(100000000);
+                        } else {
+                            LockScreenActivity.flag = true;
+                            blocked = false;
+                        }
+                    }
+                    else{
+                        if (LockScreenActivity.speed > 10) {
+                            Intent i = new Intent(context, LockScreenActivity.class);
+                            i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+                            LockScreenActivity.flag = false;
+                            if (!blocked) {
+                                ActivityLog("Mobile Locked");
+                                blocked = true;
+                            }
+                            context.startActivity(i);
+                        } else {
+                            LockScreenActivity.flag = true;
+                            blocked = false;
                         }
                     }
                 }

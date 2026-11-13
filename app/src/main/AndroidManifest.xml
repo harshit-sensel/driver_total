@@ -188,6 +188,8 @@
             android:label="Screen lock"
             android:launchMode="singleInstance"
             android:screenOrientation="portrait"
+            android:showWhenLocked="true"
+            android:turnScreenOn="true"
             android:theme="@android:style/Theme.NoTitleBar.Fullscreen" />
         <activity
             android:name=".App_lock"
