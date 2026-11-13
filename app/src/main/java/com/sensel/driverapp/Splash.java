@@ -103,11 +103,9 @@ public class Splash extends Activity {
             ActivityCompat.requestPermissions(Splash.this, new String[]{Manifest.permission.READ_PHONE_STATE}, MY_PERMISSIONS_REQUEST_READ_CONTACTS);
         } else if (ContextCompat.checkSelfPermission(Splash.this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(Splash.this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, MY_PERMISSIONS_REQUEST_READ_LOCATION);
-        }
-        /*else if (ContextCompat.checkSelfPermission(Splash.this, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(Splash.this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, MY_PERMISSIONS_REQUEST_STORAGE);
-        }*/
-        else {
+        } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU && ContextCompat.checkSelfPermission(Splash.this, Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(Splash.this, new String[]{Manifest.permission.POST_NOTIFICATIONS}, 104);
+        } else {
             if (valid_device != null && birthday != null && lastverified > 0) {
                 time_span = currentTimeMillis() / 1000 - lastverified;
                 isAuthorised = "true";
@@ -367,15 +365,14 @@ public class Splash extends Activity {
             case MY_PERMISSIONS_REQUEST_READ_LOCATION: {
                 if (grantResults.length > 0
                         && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    if (ContextCompat.checkSelfPermission(Splash.this,
-                            Manifest.permission.WRITE_EXTERNAL_STORAGE)
-                            != PackageManager.PERMISSION_GRANTED) {
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU &&
+                            ContextCompat.checkSelfPermission(Splash.this, Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED) {
                         ActivityCompat.requestPermissions(Splash.this,
-                                new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},
-                                MY_PERMISSIONS_REQUEST_STORAGE);
-                    } else
+                                new String[]{Manifest.permission.POST_NOTIFICATIONS},
+                                104);
+                    } else {
                         main();
-
+                    }
                 } else {
                     final AlertDialog ad = new AlertDialog.Builder(Splash.this).create();
                     ad.setTitle("Permission Need");
@@ -389,6 +386,10 @@ public class Splash extends Activity {
                     });
                     ad.show();
                 }
+                return;
+            }
+            case 104: {
+                main();
                 return;
             }
             /*case MY_PERMISSIONS_REQUEST_STORAGE: {

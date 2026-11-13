@@ -10,6 +10,7 @@ import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.ServiceInfo;
 import android.content.res.Configuration;
 import android.location.Location;
 import android.os.Binder;
@@ -186,7 +187,11 @@ public class LocationUpdatesService extends Service {
         if (!mChangingConfiguration && LocationUtils.requestingLocationUpdates(this)) {
             Log.i(TAG, "Starting foreground service");
 
-            //startForeground(NOTIFICATION_ID, getNotification());
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                startForeground(NOTIFICATION_ID, getNotification(), ServiceInfo.FOREGROUND_SERVICE_TYPE_LOCATION);
+            } else {
+                startForeground(NOTIFICATION_ID, getNotification());
+            }
         }
         return true; // Ensures onRebind() is called when a client re-binds.
     }

@@ -47,13 +47,10 @@ import androidx.work.WorkManager;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
-import com.google.android.gms.gcm.GcmNetworkManager;
-import com.google.android.gms.gcm.PeriodicTask;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.sensel.driverapp.service.GetChecklistForVehicleTypeService;
-import com.sensel.driverapp.service.SyncTaskService;
 import com.sensel.driverapp.utility.CheckNetwork;
 
 import org.json.JSONArray;
@@ -89,8 +86,6 @@ public class Gridmenu extends AppCompatActivity {
 
     public static Context context;
     public static String LATLONG;
-
-    private GcmNetworkManager mGcmNetworkManager;
 
     public static String[] gridViewStrings;
 
@@ -348,8 +343,8 @@ public class Gridmenu extends AppCompatActivity {
             }
         }).start();
 
-        mGcmNetworkManager = GcmNetworkManager.getInstance(this);
         checkPlayServicesAvailable();
+        checkSpecialPermissions();
 
         if (!BuildConfig.FLAVOR.contains("adani")) {
             getChecklistForOfflineWork();
@@ -480,17 +475,6 @@ public class Gridmenu extends AppCompatActivity {
     }
 
     public void startSyncTask() {
-        // [START start_one_off_task]
-        /*PeriodicTask periodic = new PeriodicTask.Builder()
-                .setService(SyncTaskService.class)
-                .setPeriod(5 * 60) //in sec - 10 min
-                .setFlex(3 * 60) //in sec - 5 min
-                .setTag("SYNC_TASK_TAG")
-                .setPersisted(false)
-                .setRequiredNetwork(com.google.android.gms.gcm.Task.NETWORK_STATE_CONNECTED)
-                .setUpdateCurrent(false)
-                .build();
-        mGcmNetworkManager.schedule(periodic);*/
         Constraints constraints = new Constraints.Builder()
                 .setRequiredNetworkType(NetworkType.CONNECTED)
                 .build();
@@ -505,16 +489,36 @@ public class Gridmenu extends AppCompatActivity {
                 ExistingPeriodicWorkPolicy.REPLACE,
                 periodicWorkRequest
         );
+    }
 
-        /*OneoffTask task = new OneoffTask.Builder()
-                .setService(SyncTaskService.class)
-                .setTag("SYNC_TASK_TAG")
-                .setUpdateCurrent(false)
-                .setExecutionWindow(0L, 3600L)
-                .setRequiredNetwork(com.google.android.gms.gcm.Task.NETWORK_STATE_ANY)
-                .build();
-        mGcmNetworkManager.schedule(task);*/
-        // [END start_one_off_task]
+    private void checkSpecialPermissions() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            if (!Settings.canDrawOverlays(this)) {
+                new AlertDialog.Builder(this)
+                        .setTitle("Permission Needed")
+                        .setMessage("Smart Driver requires 'Display over other apps' permission to lock the screen when the vehicle is moving for driver safety.")
+                        .setCancelable(false)
+                        .setPositiveButton("Grant", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                try {
+                                    Intent intent = new Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION,
+                                            Uri.parse("package:" + getPackageName()));
+                                    startActivity(intent);
+                                } catch (Exception e) {
+                                    startActivity(new Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION));
+                                }
+                            }
+                        })
+                        .setNegativeButton("Later", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                dialog.dismiss();
+                            }
+                        })
+                        .show();
+            }
+        }
     }
 
     @Override

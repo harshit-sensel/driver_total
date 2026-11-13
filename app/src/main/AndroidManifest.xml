@@ -32,7 +32,6 @@
     <uses-permission android:name="android.permission.READ_MEDIA_IMAGES" />
     <uses-permission android:name="android.permission.READ_MEDIA_VIDEO" />
     <uses-permission android:name="android.permission.READ_MEDIA_AUDIO" />
-    <uses-permission android:name="android.permission.SCHEDULE_EXACT_ALARM" />
     <uses-permission android:name="android.permission.USE_EXACT_ALARM" />
 
     <uses-feature android:name="android.hardware.camera" />
@@ -92,19 +91,11 @@
             android:theme="@style/myTheme1" />
 
         <service
-            android:name=".service.SyncTaskService"
-            android:exported="false"
-            android:permission="com.google.android.gms.permission.BIND_NETWORK_TASK_SERVICE">
-            <intent-filter>
-                <action android:name="com.google.android.gms.gcm.ACTION_TASK_READY" />
-            </intent-filter>
-        </service> <!-- [END manifest_service] -->
-        <service
             android:name=".service.SyncIntentService"
             android:exported="false" />
         <service
             android:name=".service.GetChecklistForVehicleTypeService"
-            android:foregroundServiceType="mediaPlayback"
+            android:foregroundServiceType="dataSync"
             android:exported="false" />
         <activity
             android:name=".Splash"
@@ -128,7 +119,7 @@
             android:enabled="true"
             android:stopWithTask="true"
             android:exported="false"
-            android:foregroundServiceType="dataSync|location"/>
+            android:foregroundServiceType="location"/>
 
         <receiver
             android:name=".utility.RestTimeBroadcast"
@@ -338,7 +329,8 @@
         <service
             android:name=".service.LocationUpdatesService"
             android:enabled="true"
-            android:exported="false" />
+            android:exported="false"
+            android:foregroundServiceType="location" />
 
         <service
             android:name=".service.Download_LatLong"
@@ -352,7 +344,7 @@
 
         <provider
             android:name="androidx.core.content.FileProvider"
-            android:authorities="com.example.android.fileprovider"
+            android:authorities="${applicationId}.provider"
             android:exported="false"
             android:grantUriPermissions="true">
             <meta-data

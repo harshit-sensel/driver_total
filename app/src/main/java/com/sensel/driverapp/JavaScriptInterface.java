@@ -133,21 +133,26 @@ public class JavaScriptInterface {
 
     @JavascriptInterface
     public void ShowPDF() {
-
-
-        File file = new File(Environment.getExternalStorageDirectory().getAbsolutePath() + "/" + "Driver.pdf");
+        File file = new File(con.getExternalFilesDir(null), "Driver.pdf");
+        Uri uri;
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+            uri = androidx.core.content.FileProvider.getUriForFile(con, con.getPackageName() + ".provider", file);
+        } else {
+            uri = Uri.fromFile(file);
+        }
         Intent target = new Intent(Intent.ACTION_VIEW);
-        target.setDataAndType(Uri.fromFile(file), "application/pdf");
+        target.setDataAndType(uri, "application/pdf");
+        target.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
         target.setFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
 
         Intent intent = Intent.createChooser(target, "Open File");
         try {
             intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
             con.getApplicationContext().startActivity(intent);
         } catch (ActivityNotFoundException e) {
             Toast.makeText(con, "PDF Reader applications are not exists,Please install application and try again", Toast.LENGTH_LONG).show();
         }
-
     }
 
     private void copyInputStreamToFile(InputStream in, File file) {

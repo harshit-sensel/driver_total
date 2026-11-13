@@ -2,6 +2,8 @@ package com.sensel.driverapp;
 
 import android.Manifest;
 import android.app.Notification;
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -108,9 +110,26 @@ public class AlarmReceiver extends BroadcastReceiver {
                                 if (count > 0 && previouscount != count) {
                                     NotificationManagerCompat notificationManager = NotificationManagerCompat.from(cont);
                                     Intent nid = new Intent(cont, Notification1.class);
-                                    PendingIntent ci = PendingIntent.getActivity(cont, NOTIFICATION_ID, nid, PendingIntent.FLAG_UPDATE_CURRENT);
+                                    int pendingFlags = PendingIntent.FLAG_UPDATE_CURRENT;
+                                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                                        pendingFlags |= PendingIntent.FLAG_IMMUTABLE;
+                                    }
+                                    PendingIntent ci = PendingIntent.getActivity(cont, NOTIFICATION_ID, nid, pendingFlags);
 
-                                    NotificationCompat.Builder summaryNotification = new NotificationCompat.Builder(cont);
+                                    String channelId = "driverapp_alerts";
+                                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                                        NotificationChannel channel = new NotificationChannel(
+                                                channelId,
+                                                "Driver Alerts",
+                                                NotificationManager.IMPORTANCE_HIGH
+                                        );
+                                        NotificationManager manager = (NotificationManager) cont.getSystemService(Context.NOTIFICATION_SERVICE);
+                                        if (manager != null) {
+                                            manager.createNotificationChannel(channel);
+                                        }
+                                    }
+
+                                    NotificationCompat.Builder summaryNotification = new NotificationCompat.Builder(cont, channelId);
                                     summaryNotification.setContentTitle("Smart_Driver app");
                                     summaryNotification.setContentText(count + "  new notification(s)");
                                     summaryNotification.setSmallIcon(R.mipmap.icon);

@@ -331,7 +331,7 @@ public class WrokStartandWorkEnd extends AppCompatActivity {
 
         AlarmManager alarmManager=(AlarmManager) getSystemService(Context.ALARM_SERVICE);
         Intent intent=new Intent(this, WorktimeBrodcast.class);
-        PendingIntent pendingIntent=PendingIntent.getBroadcast(this, 2,intent,FLAG_MUTABLE);
+        PendingIntent pendingIntent=PendingIntent.getBroadcast(this, 2,intent,PendingIntent.FLAG_IMMUTABLE);
         alarmManager.setRepeating(AlarmManager.RTC_WAKEUP,
                 time,30*60*1000,
                 pendingIntent);//constat need to declare as varable interaltime
