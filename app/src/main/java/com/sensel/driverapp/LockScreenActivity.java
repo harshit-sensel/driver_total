@@ -695,22 +695,24 @@ public class LockScreenActivity extends Activity {
                                             //MediaPlayer music = MediaPlayer.create(LockScreenActivity.this, R.raw.slowdown_voice);
                                             //music.start();
 
-                                            MediaPlayer music = MediaPlayer.create(LockScreenActivity.this, R.raw.slowdown_voice);
-                                            music.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
-                                                @Override
-                                                public void onCompletion(MediaPlayer mp) {
-                                                    Log.d("Audio", "Announcement completed.");
-                                                    // Avoid any navigation here unless required
-                                                }
-                                            });
-                                            music.start();
-                                            insertAudioLog("APP-OVERSPEEDING");
-
-                                            /*File file = new File(Environment.getExternalStorageDirectory() + "/driverapp/slowdown_voice.mp3");
+                                            File dir = new File(LockScreenActivity.this.getExternalFilesDir(null), "driverapp");
+                                            File file = new File(dir, "slowdown_voice.mp3");
+                                            MediaPlayer music;
                                             if (file.exists()) {
-                                                MediaPlayer.create(getApplicationContext(), Uri.parse(file.getAbsolutePath())).start();
-                                                insertAudioLog("APP-OVERSPEEDING");
-                                            }*/
+                                                music = MediaPlayer.create(getApplicationContext(), Uri.parse(file.getAbsolutePath()));
+                                            } else {
+                                                music = MediaPlayer.create(LockScreenActivity.this, R.raw.slowdown_voice);
+                                            }
+                                            if (music != null) {
+                                                music.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
+                                                    @Override
+                                                    public void onCompletion(MediaPlayer mp) {
+                                                        Log.d("Audio", "Announcement completed.");
+                                                    }
+                                                });
+                                                music.start();
+                                            }
+                                            insertAudioLog("APP-OVERSPEEDING");
                                         }
                                     } else {
                                         blinkstatus = false;
