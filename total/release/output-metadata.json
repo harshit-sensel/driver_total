@@ -1,0 +1,20 @@
+{
+  "version": 3,
+  "artifactType": {
+    "type": "APK",
+    "kind": "Directory"
+  },
+  "applicationId": "com.sensel.driverapp",
+  "variantName": "totalRelease",
+  "elements": [
+    {
+      "type": "SINGLE",
+      "filters": [],
+      "attributes": [],
+      "versionCode": 68,
+      "versionName": "8.4.1",
+      "outputFile": "app-total-release.apk"
+    }
+  ],
+  "elementType": "File"
+}
